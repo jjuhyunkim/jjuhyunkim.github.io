@@ -63,7 +63,7 @@ function applyUnifiedTagColors() {
 function applyTheme(theme) {
 	document.body.classList.toggle("dark", theme === "dark");
 
-	document.querySelectorAll(".profile-page, .cv-page").forEach(container => {
+	document.querySelectorAll(".profile-page, .project-page").forEach(container => {
 		container.classList.toggle("dark", theme === "dark");
 	});
 

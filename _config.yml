@@ -7,6 +7,9 @@ collections:
   about_me:
     output: true
     permalink: /about/:name/
+  projects:
+    output: true
+    permalink: /projects/:name/
   whats_new:
     output: true
     permalink: /whats-new/:name/
@@ -20,5 +23,10 @@ defaults:
   - scope:
       path: ""
       type: "notes"
+    values:
+      layout: "document"
+  - scope:
+      path: ""
+      type: "projects"
     values:
       layout: "document"

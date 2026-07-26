@@ -126,7 +126,7 @@ h1, h2, h3 {
   <div class="topbar">
     <div>
       <h1>Tags</h1>
-      <p class="subtitle">Browse posts and notes grouped by shared topics</p>
+      <p class="subtitle">Browse posts, notes, and projects grouped by shared topics</p>
     </div>
     <div class="theme-toggle-row">
       <a href="{{ '/' | relative_url }}">Back to home</a>
@@ -137,6 +137,7 @@ h1, h2, h3 {
   {% assign all_tags_string = '' %}
   {% assign visible_posts = site.posts | where_exp: 'item', 'item.listed != false' %}
   {% assign visible_notes = site.notes | where_exp: 'item', 'item.listed != false' %}
+  {% assign visible_projects = site.projects | where_exp: 'item', 'item.listed != false' %}
   {% for post in visible_posts %}
     {% assign post_tags_string = post.tags | join: '|' | replace: ', ', '|' | replace: ',', '|' | replace: ' ', '|' %}
     {% assign post_tag_list = post_tags_string | split: '|' %}
@@ -155,13 +156,23 @@ h1, h2, h3 {
       {% endif %}
     {% endfor %}
   {% endfor %}
+  {% for project in visible_projects %}
+    {% assign project_tags_string = project.tags | join: '|' | replace: ', ', '|' | replace: ',', '|' | replace: ' ', '|' %}
+    {% assign project_tag_list = project_tags_string | split: '|' %}
+    {% for tag in project_tag_list %}
+      {% if tag != '' %}
+      {% assign all_tags_string = all_tags_string | append: '|' | append: tag %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
   {% assign all_tags = all_tags_string | remove_first: '|' | split: '|' | uniq | sort %}
 
   <div class="tag-cloud">
     {% for tag in all_tags %}
       {% assign tagged_posts = visible_posts | where_exp: 'item', 'item.tags contains tag' %}
       {% assign tagged_notes = visible_notes | where_exp: 'item', 'item.tags contains tag' %}
-      {% assign total_count = tagged_posts.size | plus: tagged_notes.size %}
+      {% assign tagged_projects = visible_projects | where_exp: 'item', 'item.tags contains tag' %}
+      {% assign total_count = tagged_posts.size | plus: tagged_notes.size | plus: tagged_projects.size %}
       <a class="tag-chip" href="#{{ tag | slugify }}">#{{ tag }} ({{ total_count }})</a>
     {% endfor %}
   </div>
@@ -169,7 +180,8 @@ h1, h2, h3 {
   {% for tag in all_tags %}
     {% assign tagged_posts = visible_posts | where_exp: 'item', 'item.tags contains tag' %}
     {% assign tagged_notes = visible_notes | where_exp: 'item', 'item.tags contains tag' %}
-    {% assign total_count = tagged_posts.size | plus: tagged_notes.size %}
+    {% assign tagged_projects = visible_projects | where_exp: 'item', 'item.tags contains tag' %}
+    {% assign total_count = tagged_posts.size | plus: tagged_notes.size | plus: tagged_projects.size %}
     <section class="tag-section" id="{{ tag | slugify }}">
       <div class="tag-title">
         <div class="tag-name">#{{ tag }}</div>
@@ -192,6 +204,16 @@ h1, h2, h3 {
           <div class="item">
             <a href="{{ note.url | relative_url }}">{{ note.title }}</a>
             <div class="meta">{{ note.createdate | default: note.date | date: "%Y-%m-%d" }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if tagged_projects.size > 0 %}
+        <h2 class="group-title">Projects</h2>
+        {% for project in tagged_projects %}
+          <div class="item">
+            <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+            <div class="meta">{{ project.date | date: "%Y-%m-%d" }}</div>
           </div>
         {% endfor %}
       {% endif %}

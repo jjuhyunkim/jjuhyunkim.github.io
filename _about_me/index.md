@@ -99,7 +99,7 @@ description: Research profile, selected publications, and academic background.
       <ul>
         <li>Email: juhyun.kim.0203@gmail.com</li>
         <li>Phone: (202) 417-7388</li>
-        <li>Full CV page: /about/cv-template/</li>
+        <li>Projects page: /projects/</li>
       </ul>
     </section>
   </div>

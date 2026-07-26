@@ -1,0 +1,163 @@
+---
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects</title>
+<link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+
+<style>
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 980px;
+  margin: 40px auto;
+  padding: 0 20px 40px;
+}
+
+.hero {
+  background: linear-gradient(180deg, var(--card), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow-soft);
+  padding: 26px 28px;
+  margin-bottom: 20px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.topbar a {
+  color: var(--subtext);
+  text-decoration: none;
+}
+
+.topbar a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--subtext);
+  margin: 8px 0 0;
+}
+
+.project-card {
+  background: var(--card);
+  padding: 22px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+}
+
+.project-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.project-meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--subtext);
+}
+
+.project-summary {
+  margin-top: 12px;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.tags {
+  margin-top: 12px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 8px;
+  margin-right: 5px;
+  border-radius: 6px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="hero">
+    <div class="topbar">
+      <div>
+      <h1>Projects</h1>
+      <p class="subtitle">A focused list of active and completed research projects</p>
+      </div>
+      <div class="theme-toggle-row">
+        <a href="{{ '/' | relative_url }}">Back to home</a>
+        <button class="theme-toggle" type="button" data-theme-toggle>🌓</button>
+      </div>
+    </div>
+  </div>
+
+  {% assign visible_projects = site.projects | where_exp: 'item', 'item.listed != false' %}
+  {% assign projects = visible_projects | sort: 'date' | reverse %}
+
+  {% if projects.size == 0 %}
+  <div class="project-card">
+    <div>No projects found. Add a markdown file in _projects with valid front matter.</div>
+  </div>
+  {% endif %}
+
+  {% for project in projects %}
+  {% assign project_tags_string = project.tags | join: '|' | replace: ', ', '|' | replace: ',', '|' | replace: ' ', '|' %}
+  {% assign project_tag_list = project_tags_string | split: '|' %}
+  <div class="project-card">
+    <a class="project-title" href="{{ project.url | relative_url }}">{{ project.title }}</a>
+
+    <div class="project-meta">
+      {% if project.status %}Status: {{ project.status }}{% else %}Status: active{% endif %}
+      {% if project.date %} | Started: {{ project.date | date: "%Y-%m-%d" }}{% endif %}
+      {% if project.role %} | Role: {{ project.role }}{% endif %}
+    </div>
+
+    <div class="project-summary">
+      {% if project.summary %}
+      {{ project.summary }}
+      {% else %}
+      {{ project.excerpt | strip_html | strip_newlines | truncate: 260 }}
+      {% endif %}
+    </div>
+
+    {% if project.tags %}
+    <div class="tags">
+      {% for tag in project_tag_list %}
+        {% if tag != '' %}
+        <a class="tag" href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}">#{{ tag }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+<script src="{{ '/script.js' | relative_url }}"></script>
+</body>
+</html>
